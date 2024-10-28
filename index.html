@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+        .eye-icon {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            margin-left: -30px;
+            margin-top: 10px;
+        }
+        .eye-icon img {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username" required>
+        <div style="position: relative;">
+            <input type="password" id="password" placeholder="Password" required>
+            <span class="eye-icon" onclick="togglePasswordVisibility()">
+                <img id="eye-icon" src="https://img.icons8.com/material-outlined/24/000000/visible.png" alt="Toggle Password Visibility">
+            </span>
+        </div>
+        <button onclick="login()">Login</button>
+        <div class="error" id="error-message"></div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.src = 'https://img.icons8.com/material-outlined/24/000000/invisible.png'; // Change icon to "invisible"
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.src = 'https://img.icons8.com/material-outlined/24/000000/visible.png'; // Change icon back to "visible"
+            }
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+
+            // Updated username and password
+            const validUsername = 'imtiaz';
+            const validPassword = 'imtiaz7860';
+
+            if (username === validUsername && password === validPassword) {
+                // Open new window
+                window.open('welcome.html', '_self'); // Change '_self' to '_blank' to open in new tab
+            } else {
+                errorMessage.textContent = 'Invalid username or password';
+            }
+        }
+    </script>
+
+</body>
+</html>
