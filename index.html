@@ -3,278 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Upload</title>
+    <title>Login Form</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #e0f7fa; /* Attractive background color */
-            margin: 0;
-            padding: 20px;
-            color: #333;
+            background-color: #f4f4f4;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-
-        .date-time {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            color: #4CAF50; /* Color for the date and time */
-        }
-
-        .frame {
-            border: 5px solid #4CAF50; /* Frame border color */
-            border-radius: 10px;
+        .login-container {
+            background: white;
             padding: 20px;
-            background: #ffffff; /* Frame background */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 700px; /* Increased width for better visibility */
-            margin: 0 auto 20px; /* Centered with margin */
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
         }
-
-        .horizontal-line {
-            border-top: 2px solid #4CAF50; /* Top border color */
-            margin: 10px 0; /* Margin for spacing */
-        }
-
-        h1, h2 {
-            text-align: center;
-        }
-
-        h1 {
-            color: #4CAF50;
-            margin-bottom: 10px;
-        }
-
         h2 {
-            color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
-
-        input[type="file"],
-        input[type="number"],
-        button {
+        input {
+            width: calc(100% - 22px);
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
-            width: 100%; /* Full width for better layout */
         }
-
         button {
-            background-color: #4CAF50;
+            background-color: #5cb85c;
             color: white;
             border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        #pdf-list {
-            list-style-type: none;
-            padding: 0;
-            width: 100%;
-        }
-
-        #pdf-list li {
-            background: #fff;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        #pdf-list a {
-            color: #007BFF;
-            text-decoration: none;
-            font-weight: bold;
-            flex: 1; /* Allows text to take up available space */
-        }
-
-        #pdf-list .delete-button {
-            width: 80px; /* Set width for the delete button */
-            margin-left: 10px; /* Space between text and button */
-        }
-
-        #preview-container {
-            margin-top: 20px;
-            border: 1px solid #ccc;
             padding: 10px;
+            cursor: pointer;
             border-radius: 5px;
             width: 100%;
-            max-width: 400px; /* Adjusted for responsiveness */
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+        .eye-icon {
             position: relative;
+            display: inline-block;
+            cursor: pointer;
+            margin-left: -30px;
+            margin-top: 10px;
         }
-
-        #pdf-preview {
-            width: 100%;
-            height: 400px; /* Initial height */
-            border: none;
-        }
-
-        label {
-            margin: 5px 0;
+        .eye-icon img {
+            width: 20px;
+            height: 20px;
         }
     </style>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getStorage, ref, uploadBytes, listAll, getDownloadURL, deleteObject, getMetadata } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBuWqK0Qoetp5pK_V1MAi7fA6Hg39GJk60",
-            authDomain: "myfirebaseproject-1b442.firebaseapp.com",
-            projectId: "myfirebaseproject-1b442",
-            storageBucket: "myfirebaseproject-1b442.appspot.com",
-            messagingSenderId: "654947963649",
-            appId: "1:654947963649:web:62f2d563f4d714ef8b4100",
-            measurementId: "G-N5XW9JP2QL"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const storage = getStorage(app);
-
-        async function fetchPDFs() {
-            const pdfListElement = document.getElementById('pdf-list');
-            const pdfsRef = ref(storage, ''); // Path to the root
-
-            pdfListElement.innerHTML = ''; // Clear previous list
-
-            try {
-                const res = await listAll(pdfsRef);
-                res.items.forEach(async (itemRef) => {
-                    const url = await getDownloadURL(itemRef);
-                    
-                    // Fetch metadata for the upload time
-                    const metadata = await getMetadata(itemRef);
-                    const uploadTime = new Date(metadata.timeCreated);
-                    
-                    // Format date and time
-                    const formattedDate = `${String(uploadTime.getDate()).padStart(2, '0')}-${String(uploadTime.getMonth() + 1).padStart(2, '0')}-${uploadTime.getFullYear()}`;
-                    const formattedTime = `${String(uploadTime.getHours() % 12 || 12).padStart(2, '0')}:${String(uploadTime.getMinutes()).padStart(2, '0')} ${uploadTime.getHours() >= 12 ? 'PM' : 'AM'}`;
-
-                    const li = document.createElement('li');
-                    li.innerHTML = `
-                        <a href="${url}" target="_blank">${itemRef.name}</a>
-                        <span> - Uploaded on: ${formattedDate} ${formattedTime}</span>
-                        <button class="delete-button" onclick="deletePDF('${itemRef.name}')">Delete</button>
-                    `;
-                    pdfListElement.appendChild(li);
-                });
-            } catch (error) {
-                console.error("Error fetching PDFs:", error);
-            }
-        }
-
-        function updateDateTime() {
-            const now = new Date();
-            const options = { year: 'numeric', month: 'short', day: 'numeric' };
-            const date = now.toLocaleDateString('en-GB', options).replace(',', '');
-            const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-            document.getElementById('current-date-time').innerText = `${date} | ${time}`;
-        }
-
-        window.uploadPDF = async function() {
-            const fileInput = document.getElementById('file-input');
-            const file = fileInput.files[0];
-
-            if (!file) {
-                alert("Please select a file to upload.");
-                return;
-            }
-
-            const pdfRef = ref(storage, file.name); // No 'pdfs/' prefix
-
-            try {
-                await uploadBytes(pdfRef, file);
-                alert("File uploaded successfully!");
-                fetchPDFs(); // Refresh the list after upload
-                fileInput.value = ''; // Clear the file input after uploading
-            } catch (error) {
-                console.error("Error uploading file:", error);
-                alert("Error uploading file. Please try again.");
-            }
-        };
-
-        window.deletePDF = async function(pdfName) {
-            const pdfRef = ref(storage, pdfName); // Reference to the PDF
-
-            try {
-                await deleteObject(pdfRef);
-                alert("File deleted successfully!");
-                fetchPDFs(); // Refresh the list after deletion
-            } catch (error) {
-                console.error("Error deleting file:", error);
-                alert("Error deleting file. Please try again.");
-            }
-        };
-
-        window.previewPDF = function() {
-            const fileInput = document.getElementById('file-input');
-            const file = fileInput.files[0];
-
-            if (file && file.type === 'application/pdf') {
-                const url = URL.createObjectURL(file);
-                const pdfPreview = document.getElementById('pdf-preview');
-                pdfPreview.src = url;
-            } else {
-                alert("Please select a valid PDF file.");
-            }
-        };
-
-        window.setSize = function() {
-            const width = document.getElementById('width-input').value;
-            const height = document.getElementById('height-input').value;
-            const pdfPreview = document.getElementById('pdf-preview');
-
-            if (width) {
-                pdfPreview.style.width = `${width}px`;
-            }
-
-            if (height) {
-                pdfPreview.style.height = `${height}px`;
-            }
-        };
-
-        window.onload = () => {
-            fetchPDFs(); // Load PDFs on page load
-            updateDateTime(); // Set date and time on page load
-        };
-    </script>
 </head>
 <body>
-    <div class="date-time" id="current-date-time"></div> <!-- Display Date and Time -->
-    
-    <div class="frame">
-        <h1>Upload PDF</h1>
-        <input type="file" id="file-input" accept="application/pdf" onchange="previewPDF()" />
-        <button onclick="uploadPDF()">Upload PDF</button>
-        <div class="horizontal-line"></div>
-        <h2>PDFs List</h2>
-        <ul id="pdf-list"></ul>
+
+    <div class="login-container">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username" required>
+        <div style="position: relative;">
+            <input type="password" id="password" placeholder="Password" required>
+            <span class="eye-icon" onclick="togglePasswordVisibility()">
+                <img id="eye-icon" src="https://img.icons8.com/material-outlined/24/000000/visible.png" alt="Toggle Password Visibility">
+            </span>
+        </div>
+        <button onclick="login()">Login</button>
+        <div class="error" id="error-message"></div>
     </div>
-    
-    <div class="frame">
-        <h2>Set Preview Size</h2>
-        <div class="horizontal-line"></div>
-        <label for="width-input">Width (px): </label>
-        <input type="number" id="width-input" placeholder="Width" onchange="setSize()" />
-        <br />
-        <label for="height-input">Height (px): </label>
-        <input type="number" id="height-input" placeholder="Height" onchange="setSize()" />
-    </div>
-    
-    <div id="preview-container" class="frame">
-        <h2>PDF Preview</h2>
-        <iframe id="pdf-preview" src=""></iframe>
-    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.src = 'https://img.icons8.com/material-outlined/24/000000/invisible.png'; // Change icon to "invisible"
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.src = 'https://img.icons8.com/material-outlined/24/000000/visible.png'; // Change icon back to "visible"
+            }
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+
+            // Updated username and password
+            const validUsername = 'imtiaz';
+            const validPassword = 'imtiaz7860';
+
+            if (username === validUsername && password === validPassword) {
+                // Open new window
+                window.open('welcome.html', '_self'); // Change '_self' to '_blank' to open in new tab
+            } else {
+                errorMessage.textContent = 'Invalid username or password';
+            }
+        }
+    </script>
+
 </body>
 </html>
