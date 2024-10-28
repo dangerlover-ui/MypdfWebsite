@@ -7,7 +7,9 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-image: url('pexels-veeterzy-303383.jpg'); /* Add this line */
+            background-size: cover; /* Cover the entire page */
+            background-position: center; /* Center the image */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -15,7 +17,7 @@
             margin: 0;
         }
         .login-container {
-            background: white;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -99,8 +101,8 @@
             const validPassword = 'imtiaz7860';
 
             if (username === validUsername && password === validPassword) {
-                // Open pdfupload.html
-                window.open('pdfupload.html', '_self'); // Change to pdfupload.html
+                // Open new window
+                window.open('welcome.html', '_self'); // Change '_self' to '_blank' to open in new tab
             } else {
                 errorMessage.textContent = 'Invalid username or password';
             }
